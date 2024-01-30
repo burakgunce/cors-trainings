@@ -1,0 +1,27 @@
+﻿
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type="get",
+            url="https://localhost:7133/api/Hastaneler/getall",
+            contentType: "application/json",
+            dataType: "json",
+            success: function (data) {
+                $.each(hospitalData, function (index, hospital) {
+                    // Yeni bir satır oluştur
+                    var row = "<tr>" +
+                        "<td>" + hospital.Id + "</td>" +
+                        "<td>" + hospital.Name + "</td>" +
+                        "<td>" + hospital.Address + "</td>" +
+                        "</tr>";
+
+                    // Oluşturulan satırı tabloya ekle
+                    $("#hospitalTableBody").append(row);
+                });
+            },
+            error: function (data) {
+                alert(data.responseText);
+            }
+        });
+    });
+</script>
