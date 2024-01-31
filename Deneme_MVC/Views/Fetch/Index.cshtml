@@ -1,0 +1,137 @@
+﻿
+<button class="btn btn-primary" onclick="GetListFetch()">Get List</button>
+
+<div id="errorDivFetch"></div>
+
+<table class="table table-bordered table-hove">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Hastane Adı</th>
+            <th>Adres</th>
+            <th>Güncelle</th>
+            <th>Sil</th>
+        </tr>
+    </thead>
+    <tbody id="myTbody">
+        
+    </tbody>
+</table>
+
+<h1>Hastane Ekle</h1>
+<div>
+    <label>Hastane Adı</label>
+    <input type="text" id="hastaneAdiFetch" />
+    <label>Adres</label>
+    <input type="text" id="hastaneAdresFetch" />
+    <button class="btn btn-primary" onclick="CreateWithFetch()">Kaydet</button>
+</div>
+
+<h1>Hastane Güncelle</h1>
+<div id="updateDivFetch">
+    <label>Yeni Hastane Adı</label>
+    <input type="text" id="updHastaneAdiFetch" />
+    <label>Yeni Adres</label>
+    <input type="text" id="updHastaneAdresFetch" />
+    <button class="btn btn-primary" onclick="UpdateWithFetch()">Güncelle</button>
+</div>
+
+<script>
+    let apiAdress = "https://localhost:7133/api/Hastaneler/"
+    //let hospitals;
+    let tbody = document.querySelector("#myTbody");
+    let errorDiv = document.querySelector("#errorDivFetch");
+
+    let tempId;
+    let tempAd;
+    let tempAdres;
+    
+    async function GetListFetch() {
+        //fetch(apiAdress + "getall").then(data => { hospitals = data.json() });
+        let response = await fetch(apiAdress + "getall");
+        let datas = await response.json();
+        
+        let rows = "";
+        if (response.status == 200) {
+            for (let hastane of datas) {
+                rows += '<tr>' +
+                    '<td>' + hastane.id + '</td>' +
+                    '<td>' + hastane.hastaneAd + '</td>' +
+                    '<td>' + hastane.hastaneAdres + '</td>' +
+                    //'<td><button onclick="GetUpdateDiv('+hastane.id+')">Update</button></td>' +
+                    '<td><button onclick="BosluguDoldur(' + hastane.id +')">Update</button></td>' +
+                    '<td><button onclick="DeleteWithFetch('+hastane.id+')">Delete</button></td>' +
+                    '</tr>';
+            }
+            tbody.innerHTML = rows;
+        }
+        else {
+            errorDiv.textContent = "Something went wrong !!!";
+        }
+    }
+
+    async function CreateWithFetch() {
+        let hastaneAdi = document.getElementById("hastaneAdiFetch").value;
+        let hastaneAdres = document.getElementById("hastaneAdresFetch").value;
+
+        let response = await fetch(apiAdress + "add", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                Name: hastaneAdi,
+                Adres: hastaneAdres
+            })
+        });
+
+        if (response.status == 200) {
+            GetListFetch();
+        } else {
+            errorDiv.textContent = "Something went wrong !!!";
+        }
+    }
+
+    async function UpdateWithFetch(id) {
+        let newHastaneAdi = document.getElementById("updHastaneAdiFetch").value;
+        let newHastaneAdres = document.getElementById("updHastaneAdresFetch").value;
+
+        let response = await fetch(apiAdress + "Update?id=" + id, {
+            method: "PUT",
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+            body: JSON.stringify({
+                name: newHastaneAdi,
+                adres: newHastaneAdres
+            })
+        });
+
+        if (response.status == 200) {
+            GetListFetch();
+        } else {
+            errorDiv.textContent = "Something went wrong !!!";
+        }
+    }
+
+    async function DeleteWithFetch(id) {
+        let response = await fetch(apiAdress + "Delete?id=" + id, {
+            method: "DELETE"
+        });
+
+        if (response.status == 200) {
+            GetListFetch();
+        } else {
+            errorDiv.textContent = "Something went wrong while deleting the hospital.";
+        }
+    }
+
+    function BosluguDoldur(id) {
+        document.getElementById("updHastaneAdiFetch").value = "burak";
+        document.getElementById("updHastaneAdresFetch").value = "adres";
+    }
+
+    //getbyid ile verileri cek yazdır
+
+</script>
