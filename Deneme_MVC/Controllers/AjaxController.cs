@@ -17,6 +17,7 @@ namespace ConsumeWebApiCors.Controllers
 
         public IActionResult GetAll2()
         {
+            //Esas çalışan bu
             return View();
         }
 
